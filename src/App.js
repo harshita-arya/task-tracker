@@ -1,40 +1,75 @@
-import React, { Component } from 'react';
-import Todos from './Todos'
-import AddTodo from './AddTodo'
+import { useState } from "react"
+import Header from "./components/Header"
+import Tasks from "./components/Tasks"
+import AddTask from "./components/AddTask"
 
-class App extends Component {
-  state = {
-    todos: [
-      {id: 1, content: 'buy some milk'},
-      {id: 2, content: 'play brain out'}
+const App = () => {
+  const[showAddTask, setShowAddTask] = useState
+  (false)
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      text: "Doctors Appointment",
+      day: "Feb 5th at 2:30pm",
+      reminder: true,
+    },
 
-    ]
-  }
-  deleteTodo = (id) => {
-    const todos = this.state.todos.filter(todo =>  {
-      return todo.id !==id
-    });
-    this.setState({
-      todos
-    })
-  }
-  addTodo = (todo) => {
-todo.id = Math.random();
-let todos = [...this.state.todos, todo];
-this.setState({
-  todos
-})
-  }
-  render() {
-  return (
-    <div className="todo-app container">
-     <h1 className="center blue-text">Todo's</h1>
-     <Todos todos ={this.state.todos} deleteTodo={this.deleteTodo} />
-     <AddTodo  addTodo={this.addTodo} />
 
-    </div>
-   );
-  }
+
+  { id: 2,
+    text: "Grocery store",
+    day: "Feb 8th at 12:30pm",
+    reminder: true,
+  },
+
+    { id: 3,
+      text: "Complete react",
+      day: "Feb 12th at 01:10pm",
+      reminder: false,
+    },
+  ])
+
+//  Add Task 
+
+const addTask = (task) => {
+  const id = Math.floor(Math.random() * 10000) + 1
+  const newTask = {id, ...task }
+  setTasks([...tasks, newTask])
 }
 
-export default App;
+  // Delete Task
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !==id))
+  }
+
+  // Toggle Reminder
+  const toggleReminder = (id) => {
+    setTasks(
+      tasks.map((task) => 
+      task.id === id ? {...task, reminder:
+      !task.reminder } : task
+    )
+    )
+    
+  }
+
+
+
+
+
+  return (
+    <div className="container">
+      <Header onAdd={() => setShowAddTask(!showAddTask)}
+      showAdd={showAddTask} />
+      {showAddTask && <AddTask onAdd={addTask} />}
+      {tasks.length > 0 ? <Tasks tasks={tasks} onDelete=
+      {deleteTask} onToggle={toggleReminder}/> : (
+        "No tasks to show"
+      )}
+      
+    </div>
+  )
+}
+
+export default App
+
